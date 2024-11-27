@@ -2,15 +2,15 @@
 
 @section('content')
     <div class="container">
-        <h2>My Visits</h2>
+        <h2>My Test Results</h2>
         @if($visits->isEmpty())
-            <p>No visits found.</p>
+            <p>No Tests found.</p>
         @else
             <table class="table table-striped table-bordered">
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Visit Date</th>
+                    <th>Visit Month</th>
                     <th>Part 1 / Score</th>
                     <th>Part 2 / Score</th>
                     <th>Part 3 / Score</th>
@@ -20,13 +20,13 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($visits as $visit)
+                @foreach($visits as $index=>$visit)
                     @php
                         $total = 0;
                     @endphp
                     <tr>
-                        <td>{{ $visit->id }}</td>
-                        <td>{{ $visit->visit_date }}</td>
+                        <td>{{ optional($visit->patient)->id.'_'.$visit->visit_month }}</td>
+                        <td>{{ $visit->visit_month }}</td>
 
                         <!-- Part 1 -->
                         <td>
@@ -66,7 +66,7 @@
                                 {{ $part3_score }}
                                 <i class="fa fa-check text-success"></i>
                             @else
-                                <i class="fa fa-times text-danger"></i>
+                                <button disabled>For Doctor</button>
                             @endif
                         </td>
 
@@ -80,7 +80,7 @@
                                 {{ $part4_score }}
                                 <i class="fa fa-check text-success"></i>
                             @else
-                                <i class="fa fa-times text-danger"></i>
+                                <button disabled>For Doctor</button>
                             @endif
                         </td>
 
@@ -88,7 +88,7 @@
                         <td>{{ $total }}</td>
 
                         <td>
-                            <a href="{{ route('patient.surveys.show', ['survey_id' => $visit->id]) }}" class="btn btn-success btn-sm">View Survey</a>
+                            <a href="{{ route('patient.surveys.show', ['survey_id' => $visit->id]) }}" class="btn btn-success btn-sm">View test</a>
                         </td>
                     </tr>
                 @endforeach

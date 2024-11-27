@@ -66,7 +66,7 @@
 @section('content')
     <div class="container mtmb">
         <div class="row justify-content-center">
-            @include('notification_messages')
+{{--            @include('notification_messages')--}}
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
@@ -115,6 +115,9 @@
                 @if($errors->has('password'))
                     <div class="validation-error">{{ $errors->first('password') }}</div>
                 @endif
+                <small class="password-hint">
+                    Password must be at least 8 characters, contain at least one uppercase letter, one lowercase letter, one number, and one special character.
+                </small>
             </div>
 
             <div class="form-group">
@@ -123,6 +126,15 @@
                 @if($errors->has('password_confirmation'))
                     <div class="validation-error">{{ $errors->first('password_confirmation') }}</div>
                 @endif
+            </div>
+
+            <div class="form-group">
+                <label for="password_confirmation">Select Doctor</label>
+                <select class="form-control" required>
+                    @foreach(\App\Models\Doctor::all() as $do)
+                        <option value="{{$do->id}}">{{$do->fullname}}</option>
+                    @endforeach
+                </select>
             </div>
 
             <button type="submit" class="btn btn-primary">Sign Up</button>

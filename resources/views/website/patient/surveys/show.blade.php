@@ -45,7 +45,7 @@
         @if(count($surveies))
         <!-- Back Button -->
         <div style="justify-content: space-between;" class="mb-4 d-flex">
-            <h4>Survey Details: [{{ optional($surveies->first()->patient)->fullname }}]</h4>
+            <h4>Survey Details: [{{ optional($surveies->first()->patient)->id }}]</h4>
             <a href="javascript:history.back()" class="btn btn-danger">
                 Go Back<i class="fa fa-arrow-right" aria-hidden="true"></i>
             </a>

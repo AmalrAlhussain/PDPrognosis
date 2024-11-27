@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
+use App\Models\ParkinsonGameResult;
 use App\Models\Patient;
 use App\Models\Survey;
 use App\Models\SurveyQuestion;
+use App\Models\TypingTestResult;
 use App\Models\Visit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,11 +22,18 @@ class PatientAuthController extends Controller
         $myDoctor = $authUser->doctor;
         $myVisits = $authUser->visits()->with('doctor')->orderBy('visit_date', 'desc')->take(5)->get();
         $mySurveys = $authUser->surveys()->orderBy('created_at', 'desc')->take(5)->get();
-        $visitsCount = $authUser->visits()->count();
+        $visitsCount = $authUser->visits()->take(12)->get()->count();
         $surveysCount = $authUser->surveys()->count();
 
-        return view('website.patient.dashboard', compact('authUser', 'visitsCount', 'surveysCount', 'myVisits', 'mySurveys'));
+        $gameResults = ParkinsonGameResult::where('patient_id', $authUser->id)->orderBy('created_at', 'desc')->get();
+
+        $typingResults = \App\Models\TypingTestResult::where('patient_id', $authUser->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('website.patient.dashboard', compact('authUser', 'gameResults','visitsCount', 'surveysCount', 'myVisits', 'mySurveys', 'typingResults'));
     }
+
 
     public function showLoginForm()
     {
@@ -59,11 +68,21 @@ class PatientAuthController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'doctor_id ' => 'required',
             'fullname' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:patient',
             'username' => 'required|string|max:255|unique:patient',
-            'password' => 'required|string|min:8|confirmed',
-            'phone' => 'required|numeric|digits:11',
+            'password' => [
+                'required',
+                'string',
+                'min:8', // At least 8 characters
+                'confirmed', // Must match the confirmation
+                'regex:/[A-Z]/', // At least one uppercase letter
+                'regex:/[a-z]/', // At least one lowercase letter
+                'regex:/[0-9]/', // At least one number
+                'regex:/[@$!%*?&]/', // At least one special character
+            ],
+            'phone' => 'required|numeric|digits:10',
         ]);
 
         if ($validator->fails()) {
@@ -76,7 +95,8 @@ class PatientAuthController extends Controller
             'password' => Hash::make($request->password),
             'phone' => $request->phone,
             'username' => $request->username,
-            'status' => 1, // Default status can be set as active (1)
+            'doctor_id' => $request->doctor_id,
+            'status' => 1,
         ]);
 
         Auth::guard('patient')->login($patient);
@@ -97,7 +117,6 @@ class PatientAuthController extends Controller
         $patient = Auth::guard('patient')->user();
 
         $validator = Validator::make($request->all(), [
-            'fullname' => 'required|string|max:255',
             'phone' => 'required|string',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
@@ -130,7 +149,7 @@ class PatientAuthController extends Controller
     public function getMyVisits()
     {
         $authUser = Auth::guard('patient')->user();
-        $visits = $authUser->visits()->with('doctor', 'surveys')->orderBy('visit_date', 'desc')->get();
+        $visits = $authUser->visits()->take(12)->with('doctor', 'surveys')->orderBy('visit_date', 'desc')->get();
 
         return view('website.patient.my-visits', compact('visits'));
     }
@@ -199,4 +218,46 @@ class PatientAuthController extends Controller
         $surveies = Survey::whereIn('part', [1,2,3,4])->with('surveyAnswers.question')->where('visit_id', $id)->get();
         return view('website.patient.surveys.show', compact('surveies'));
     }
+
+
+    public function storeTypingTestResults(Request $request)
+    {
+        $validated = $request->validate([
+            'key_durations' => 'required|json',
+            'mouse_stability' => 'required|numeric',
+            'typing_accuracy' => 'required|numeric|min:0|max:100',
+            'feedback' => 'nullable|string',
+        ]);
+
+        $result = TypingTestResult::create([
+            'patient_id' => Auth::guard('patient')->id(),
+            'key_durations' => $validated['key_durations'],
+            'mouse_stability' => $validated['mouse_stability'],
+            'typing_accuracy' => $validated['typing_accuracy'],
+            'feedback' => $validated['feedback'],
+        ]);
+
+        return redirect()->route('patient.dashboard')->with('success', 'Typing test results saved successfully.');
+    }
+
+
+    public function focus_game(Request $request)
+    {
+//        $request->validate([
+//            'score' => 'required|integer',
+//            'total_games' => 'required|integer',
+//            'highest_score' => 'required|integer',
+//            'average_score' => 'required|numeric',
+//            'feedback' => 'required|string',
+//        ]);
+        $data = $request->all();
+        $data['patient_id'] = Auth::guard('patient')->id();
+        $result = ParkinsonGameResult::create($data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Game results saved successfully.',
+            'data' => $result,
+        ]);
+    }
+
 }

@@ -6,13 +6,13 @@
         <form action="{{ route('patient.profile.update') }}" method="POST">
             @csrf
 
-            <div class="form-group">
-                <label for="fullname">Full Name:</label>
-                <input type="text" class="form-control" name="fullname" value="{{ old('fullname', $patient->fullname) }}" required>
-                @error('fullname')
-                <div class="text-danger">{{ $message }}</div>
-                @enderror
-            </div>
+{{--            <div class="form-group">--}}
+{{--                <label for="fullname">Full Name:</label>--}}
+{{--                <input type="text" class="form-control" name="fullname" value="{{ old('fullname', $patient->fullname) }}" required>--}}
+{{--                @error('fullname')--}}
+{{--                <div class="text-danger">{{ $message }}</div>--}}
+{{--                @enderror--}}
+{{--            </div>--}}
 
             <div class="form-group">
                 <label for="username">Username:</label>

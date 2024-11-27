@@ -57,7 +57,7 @@
 
 @section('content')
     <div class="container mb-5">
-        <h4 class="mb-4 patinname">Survey for Patient: {{ $patient->fullname }} & Part : {{$part}}</h4>
+        <h4 class="mb-4 patinname">Survey for Patient: {{ $patient->id }} & Part : {{$part}}</h4>
         <div>
             <p class="lineStart">
                 I am going to ask you six questions about behaviors that you may or may not experience.
