@@ -31,26 +31,14 @@
                 </div>
             </div>
 
-            <!-- Visits Count -->
-            <div class="col-md-3 market-update-gd">
-                <div class="market-update-block clr-block-4">
-                    <div class="col-md-8 market-update-left">
-                        <h3>{{ $visitsCount }}</h3>
-                        <h4>Visits</h4>
-                    </div>
-                    <div class="col-md-4 market-update-right">
-                        <i class="fa fa-calendar-check-o"></i>
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-            </div>
+
 
             <!-- Surveys Count -->
             <div class="col-md-3 market-update-gd">
                 <div class="market-update-block clr-block-1">
                     <div class="col-md-8 market-update-left">
                         <h3>{{ $surveysCount }}</h3>
-                        <h4>Surveys</h4>
+                        <h4>Tests</h4>
                     </div>
                     <div class="col-md-4 market-update-right">
                         <i class="fa fa-question-circle-o"></i>
@@ -65,7 +53,7 @@
         <table class="table table-bordered">
             <thead>
             <tr>
-                <th>Patient Name</th>
+                <th>Patient ID</th>
                 <th>Email</th>
                 <th>Mobile</th>
                 <th>Date Joined</th>
@@ -74,7 +62,7 @@
             <tbody>
             @foreach($latestPatients as $patient)
                 <tr>
-                    <td>{{ $patient->fullname }}</td>
+                    <td>{{ $patient->id }}</td>
                     <td>{{ $patient->email }}</td>
                     <td>{{ $patient->phone }}</td>
                     <td>{{ $patient->created_at->format('Y-m-d') }}</td>
@@ -88,14 +76,14 @@
         <table class="table table-bordered">
             <thead>
             <tr>
-                <th>Patient Name</th>
+                <th>Patient ID</th>
                 <th>Visit Date</th>
             </tr>
             </thead>
             <tbody>
             @foreach($latestVisits as $visit)
                 <tr>
-                    <td>{{ $visit->patient->fullname }}</td>
+                    <td>{{ $visit->patient->id }}</td>
                     <td>{{ $visit->visit_date }}</td>
                 </tr>
             @endforeach

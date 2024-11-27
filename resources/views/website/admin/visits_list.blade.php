@@ -10,7 +10,7 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Visit Date</th>
+                    <th>Visit Month</th>
                     <th>Doctor</th>
                     <th>Patient</th>
                     <th>Score</th>
@@ -21,7 +21,7 @@
                 @foreach($visits as $visit)
                     <tr>
                         <td>{{ $visit->id }}</td>
-                        <td>{{ $visit->visit_date }}</td>
+                        <td>{{ $visit->visit_month }}</td>
                         <td>{{ $visit->doctor ? $visit->doctor->fullname : 'N/A' }}</td>
                         <td>{{ $visit->patient ? $visit->patient->id : 'N/A' }}</td>
                         <td>{{ $visit->score ?? 'N/A' }}</td>

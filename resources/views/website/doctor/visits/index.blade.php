@@ -2,8 +2,8 @@
 
 @section('content')
     <div class="container">
-        <h2>My Visits</h2>
-        <a style="float: right;" href="{{ route('doctor.visits.create') }}" class="btn btn-primary">Add New Survey</a>
+        <h2>Patients Test</h2>
+        <a style="float: right;" href="{{ route('doctor.visits.create') }}" class="btn btn-primary">Add New Test</a>
         @if($visits->isEmpty())
             <p>No visits found.</p>
         @else
@@ -11,8 +11,8 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Patient Name</th>
-                    <th>Visit Date</th>
+                    <th>Patient ID</th>
+                    <th>Visit Month</th>
                     <th>Part 1 / Score</th>
                     <th>Part 2 / Score</th>
                     <th>Part 3 / Score</th>
@@ -27,9 +27,10 @@
                         $total = 0;
                     @endphp
                     <tr>
-                        <td>{{ $visit->id }}</td>
-                        <td>{{ $visit->patient->fullname }}</td>
-                        <td>{{ $visit->visit_date }}</td>
+                        <td>{{ optional($visit->patient)->id.'_'.$visit->visit_month }}</td>
+
+                        <td>{{ $visit->patient->id }}</td>
+                        <td>{{ $visit->visit_month }}</td>
                         <!-- Part 1 -->
                         <td>
                             @if($visit->surveys->where('part', 1)->count())
@@ -40,7 +41,7 @@
                                 {{ $part1_score }}
                                 <i class="fa fa-check text-success"></i>
                             @else
-                                <i class="fa fa-times text-danger"></i>
+                                <button disabled>For Patient</button>
                             @endif
                         </td>
 
@@ -54,7 +55,8 @@
                                 {{ $part2_score }}
                                 <i class="fa fa-check text-success"></i>
                             @else
-                                <i class="fa fa-times text-danger"></i>
+                                <button disabled>For Patient</button>
+
                             @endif
                         </td>
 
@@ -68,7 +70,7 @@
                                 {{ $part3_score }}
                                 <i class="fa fa-check text-success"></i>
                             @else
-                                <a href="{{ route('patient.surveys.selectPart', ['visit_id' => $visit->id, 'part' => 3]) }}" class="btn btn-primary btn-sm">Start Part 2</a>
+                                <a href="{{ route('doctor.surveys.selectPart', ['visit_id' => $visit->id, 'part' => 3,'patient_id' => $visit->patient_id]) }}" class="btn btn-primary btn-sm">Start Part 3</a>
                             @endif
                         </td>
 
@@ -82,7 +84,7 @@
                                 {{ $part4_score }}
                                 <i class="fa fa-check text-success"></i>
                             @else
-                                <a href="{{ route('patient.surveys.selectPart', ['visit_id' => $visit->id, 'part' => 4]) }}" class="btn btn-primary btn-sm">Start Part 2</a>
+                                <a href="{{ route('doctor.surveys.selectPart', ['visit_id' => $visit->id, 'part' => 4, 'patient_id' => $visit->patient_id]) }}" class="btn btn-primary btn-sm">Start Part 4</a>
                             @endif
                         </td>
 
@@ -97,7 +99,7 @@
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
                             </form>
-                                <a href="{{ route('doctor.surveys.show', ['survey_id' => $visit->id]) }}" class="btn btn-success btn-sm">View Survey</a>
+                                <a href="{{ route('doctor.surveys.show', ['survey_id' => $visit->id]) }}" class="btn btn-success btn-sm">View Test</a>
                         </td>
                     </tr>
                 @endforeach

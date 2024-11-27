@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Http;
 
 class DoctorAuthController extends Controller
 {
@@ -28,8 +29,8 @@ class DoctorAuthController extends Controller
             ->groupBy('patient_id')
             ->with('patient')
             ->get();
-        $patients = $visitData->pluck('patient.fullname');
-        $visitCounts = $visitData->pluck('visit_count');
+        $patients = $visitData->where('patient_id' ,'!=', 55)->pluck('patient.id');
+        $visitCounts = $visitData->where('patient_id' ,'!=', 55)->pluck('visit_count');
         return view('website.doctor.dashboard', compact(
             'authUser', 'patientsCount', 'visitsCount', 'surveysCount', 'myPatients', 'myVisits', 'patients', 'visitCounts'
         ));
@@ -71,12 +72,21 @@ class DoctorAuthController extends Controller
             'fullname' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:doctor',
             'username' => 'required|string|max:255|unique:doctor',
-            'password' => 'required|string|min:8|confirmed',
-            'phone' => 'required|numeric|digits:11',
+            'password' => [
+                'required',
+                'string',
+                'min:8', // At least 8 characters
+                'confirmed', // Must match the confirmation
+                'regex:/[A-Z]/', // At least one uppercase letter
+                'regex:/[a-z]/', // At least one lowercase letter
+                'regex:/[0-9]/', // At least one number
+                'regex:/[@$!%*?&]/', // At least one special character
+            ],
+            'phone' => 'required|numeric|digits:10',
         ]);
 
         if ($validator->fails()) {
-            return back()->withInput()->withErrors($validator)->withInput();
+            return back()->withInput()->withErrors($validator);
         }
 
         $doctor = Doctor::create([
@@ -85,13 +95,14 @@ class DoctorAuthController extends Controller
             'password' => Hash::make($request->password),
             'phone' => $request->phone,
             'username' => $request->username,
-            'status' => 1, // Default status can be set as active (1)
+            'status' => 0, // Default status as active
         ]);
 
-        Auth::guard('doctor')->login($doctor);
+//        Auth::guard('doctor')->login($doctor);
 
-        return redirect()->route('doctor.profile');
+        return redirect()->route('doctor.login');
     }
+
 
     // Show profile page
     public function profile()
@@ -141,9 +152,10 @@ class DoctorAuthController extends Controller
     public function myPatients()
     {
         $doctor = Auth::guard('doctor')->user();
-        $patients = $doctor->patients()->where('status', 1)->orderBy('id','desc')->get(); // Fetch only accepted patients
+        $patients = $doctor->patients()->where('status', 1)->orderBy('id', 'desc')->get(); // Fetch only accepted patients
         return view('website.doctor.my_patients', compact('patients'));
     }
+
     public function showPatient($id)
     {
         // Find the patient by ID
@@ -180,6 +192,7 @@ class DoctorAuthController extends Controller
             ->pluck('visit_month', 'id');
         return view('website.doctor.patients.protein_peptide', compact('patient', 'proteins', 'peptides', 'visits'));
     }
+
     public function fetchProteinPeptide(Request $request)
     {
         $proteins = Protein::where('patient_id', $request->patient_id)
@@ -193,4 +206,44 @@ class DoctorAuthController extends Controller
     }
 
 
+    public function getLatestParkinsonResearch()
+    {
+        $query = 'Parkinson';
+        $url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term={$query}&retmode=json&retmax=5";
+
+        $response = Http::get($url);
+
+        if ($response->successful()) {
+            $data = $response->json();
+            $ids = implode(',', $data['esearchresult']['idlist']);
+            $detailsUrl = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id={$ids}&retmode=json";
+            $details = Http::get($detailsUrl)->json();
+            $researchArticles = [];
+            foreach ($details['result'] as $key => $result) {
+                if ($key !== 'uids') {
+                    $researchArticles[] = [
+                        'title' => $result['title'] ?? 'No Title',
+                        'authors' => [],
+                        'source' => $result['source'] ?? 'Unknown',
+                        'published_date' => $result['pubdate'] ?? 'Unknown',
+                        'url' => "https://pubmed.ncbi.nlm.nih.gov/{$key}/",
+                    ];
+                }
+            }
+
+            return view('website.doctor.research', compact('researchArticles'));
+        }
+
+        return back()->with('error', 'Unable to fetch research data at the moment.');
+
+
+    }
+
+
+    public function showGameResults($patientId)
+    {
+        $patient = Patient::with('gameResults', 'typingGameResults')->findOrFail($patientId);
+
+        return view('website.doctor.games', compact('patient'));
+    }
 }

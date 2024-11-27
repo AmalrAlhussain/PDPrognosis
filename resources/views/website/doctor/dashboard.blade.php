@@ -51,7 +51,7 @@
         <table class="table table-bordered">
             <thead>
             <tr>
-                <th>Patient Name</th>
+                <th>Patient ID</th>
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Date Joined</th>
@@ -60,7 +60,7 @@
             <tbody>
             @foreach($myPatients as $patient)
                 <tr>
-                    <td>{{ $patient->fullname }}</td>
+                    <td>{{ $patient->id }}</td>
                     <td>{{ $patient->email }}</td>
                     <td>{{ $patient->phone }}</td>
                     <td>{{ $patient->created_at->format('Y-m-d') }}</td>
@@ -74,15 +74,15 @@
         <table class="table table-bordered">
             <thead>
             <tr>
-                <th>Patient Name</th>
+                <th>Patient ID</th>
                 <th>Visit Date</th>
             </tr>
             </thead>
             <tbody>
             @foreach($myVisits as $visit)
                 <tr>
-                    <td>{{ $visit->patient->fullname }}</td>
-                    <td>{{ $visit->visit_date }}</td>
+                    <td>{{ $visit->patient->id }}</td>
+                    <td>{{ $visit->visit_month }}</td>
                 </tr>
             @endforeach
             </tbody>

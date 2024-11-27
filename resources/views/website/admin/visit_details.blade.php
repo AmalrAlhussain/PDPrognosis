@@ -15,7 +15,7 @@
             </tr>
             <tr>
                 <th>Patient</th>
-                <td>{{ $visit->patient ? $visit->patient->fullname : 'N/A' }}</td>
+                <td>{{ $visit->patient ? $visit->patient->id : 'N/A' }}</td>
             </tr>
             <tr>
                 <th>Score</th>

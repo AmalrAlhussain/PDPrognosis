@@ -31,7 +31,7 @@
 
         <!-- Back Button -->
         <div style="justify-content: space-between;" class="mb-4 d-flex">
-            <h4>Patient Profile: {{ $patient->fullname }}</h4>
+            <h4>Patient Profile: {{ $patient->id }}</h4>
             <a href="javascript:history.back()" class="btn btn-danger">
                 Go Back<i class="fa fa-arrow-right" aria-hidden="true"></i>
             </a>
@@ -65,35 +65,35 @@
             </div>
         </div>
 
-        <!-- Filter Search for Visits by Date Range -->
-        <div class="filter-box">
-            <h5>Filter Visits by Date Range</h5>
-            <form id="dateFilterForm">
-                <div class="row">
-                    <div class="col-md-4">
-                        <label for="startDate">Start Date</label>
-                        <input type="date" id="startDate" class="form-control">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="endDate">End Date</label>
-                        <input type="date" id="endDate" class="form-control">
-                    </div>
-                    <div class="col-md-4 d-flex align-items-end">
-                        <button type="button" id="filterButton" class="btn btn-primary">Filter</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+{{--        <!-- Filter Search for Visits by Date Range -->--}}
+{{--        <div class="filter-box">--}}
+{{--            <h5>Filter Visits by Date Range</h5>--}}
+{{--            <form id="dateFilterForm">--}}
+{{--                <div class="row">--}}
+{{--                    <div class="col-md-4">--}}
+{{--                        <label for="startDate">Start Date</label>--}}
+{{--                        <input type="date" id="startDate" class="form-control">--}}
+{{--                    </div>--}}
+{{--                    <div class="col-md-4">--}}
+{{--                        <label for="endDate">End Date</label>--}}
+{{--                        <input type="date" id="endDate" class="form-control">--}}
+{{--                    </div>--}}
+{{--                    <div class="col-md-4 d-flex align-items-end">--}}
+{{--                        <button type="button" id="filterButton" class="btn btn-primary">Filter</button>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            </form>--}}
+{{--        </div>--}}
 
         <!-- Patient Visits -->
-        <h4>Visits</h4>
+        <h4>Tests</h4>
         @if($patient->visits->isEmpty())
             <p>No visits found.</p>
         @else
-            @foreach($patient->visits as $visit)
+            @foreach($patient->visits()->take(12)->get() as $visit)
                 <div class="card mb-4 visit-card" data-visit-date="{{ $visit->visit_date }}">
                     <div class="card-header collapsible" data-toggle="collapse" data-target="#visit-{{ $visit->id }}">
-                        Visit on {{ $visit->visit_date }} (Click to expand/collapse)
+                        Visit on {{ $visit->visit_month }} (Click to expand/collapse)
                     </div>
                     <div id="visit-{{ $visit->id }}" class="collapse">
                         <div class="card-body">
@@ -101,7 +101,7 @@
 
                             <!-- Survey Scores -->
                             @if($visit->surveys->isNotEmpty())
-                                <h5>Survey Scores</h5>
+                                <h5>Test Scores</h5>
                                 <canvas id="surveyChart-{{ $visit->id }}" width="400" height="200"></canvas>
                             @else
                                 <p>No surveys completed for this visit.</p>

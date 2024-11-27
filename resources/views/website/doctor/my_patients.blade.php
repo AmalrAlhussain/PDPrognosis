@@ -16,6 +16,7 @@
                     <th>Status</th>
                     <th>Protein/Peptide</th>
                     <th>Visits</th>
+                    <th>Game Results</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -34,10 +35,13 @@
                         <td>
                             <a href="{{ route('doctor.patients.showDetails', $patient->id) }}" class="btn btn-info btn-sm">View Details</a>
                         </td>
-
-
                         <td>
                             <a href="{{ route('doctor.patients.show', $patient->id) }}" class="btn btn-primary btn-sm">View Visits</a>
+                        </td>
+                        <td>
+                            <a href="{{ route('doctor.patients.games', $patient->id) }}" class="btn btn-secondary btn-sm">
+                                View Diagnosis
+                            </a>
                         </td>
                     </tr>
                 @endforeach

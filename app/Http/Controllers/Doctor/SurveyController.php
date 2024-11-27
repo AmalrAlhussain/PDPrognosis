@@ -17,7 +17,6 @@ class SurveyController extends Controller
         $visit_id = $request->visit_id;
         $patient_id = $request->patient_id;
         $visit = Visit::find($visit_id);
-
         return view('website.doctor.surveys.select_part', compact('visit_id', 'patient_id', 'visit'));
     }
 

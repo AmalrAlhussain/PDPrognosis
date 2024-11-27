@@ -40,7 +40,7 @@ class AdminController extends Controller
             ->groupBy('patient_id')
             ->with('patient')
             ->get();
-        $patients = $visitData->pluck('patient.fullname');
+        $patients = $visitData->pluck('patient.id');
         $visitCounts = $visitData->pluck('visit_count');
         return view('website.admin.dashboard', compact(
             'authUser', 'doctorsCount', 'patientsCount', 'visitsCount', 'surveysCount', 'latestPatients', 'latestVisits', 'patients', 'visitCounts'
@@ -219,9 +219,7 @@ class AdminController extends Controller
 
     public function listVisits()
     {
-        $visits = Cache::remember('visits_data', 600, function () {
-            return Visit::with(['doctor', 'patient'])->get();
-        });
+        $visits =  Visit::with(['doctor', 'patient'])->limit(100)->get();
         return view('website.admin.visits_list', compact('visits'));
     }
 
