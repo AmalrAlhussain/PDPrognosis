@@ -10,7 +10,7 @@
             color: #0c40c8;
         }
 
-        .card {
+            .card {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border: none;
             border-radius: 10px;
@@ -61,18 +61,13 @@
             font-size: 14px;
             margin-top: 5px;
         }
-
-        .password-hint {
-            font-size: 14px;
-            color: #6c757d;
-            margin-top: 5px;
-        }
     </style>
 @endpush
 
 @section('content')
     <div class="container mtmb">
         <div class="row justify-content-center">
+            @include('notification_messages')
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
@@ -109,7 +104,7 @@
 
                             <div class="form-group">
                                 <label for="phone">Phone Number</label>
-                                <input type="number" class="form-control" id="phone" name="phone" value="{{ old('phone') }}" required>
+                                <input type="text" class="form-control" id="phone" name="phone" value="{{ old('phone') }}" required>
                                 @if($errors->has('phone'))
                                     <div class="validation-error">{{ $errors->first('phone') }}</div>
                                 @endif
@@ -121,9 +116,6 @@
                                 @if($errors->has('password'))
                                     <div class="validation-error">{{ $errors->first('password') }}</div>
                                 @endif
-                                <small class="password-hint">
-                                    Password must be at least 8 characters, contain at least one uppercase letter, one lowercase letter, one number, and one special character.
-                                </small>
                             </div>
 
                             <div class="form-group">
