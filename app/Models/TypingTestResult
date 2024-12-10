@@ -1,0 +1,23 @@
+<?php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class TypingTestResult extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'patient_id',
+        'key_durations',
+        'mouse_stability',
+        'typing_accuracy',
+        'feedback',
+    ];
+
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class);
+    }
+}
