@@ -11,18 +11,19 @@
                 <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Full Name</th>
                     <th>Email</th>
                     <th>Phone</th>
                     <th>Status</th>
                     <th>Protein/Peptide</th>
                     <th>Visits</th>
-                    <th>Game Results</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach($patients as $patient)
                     <tr>
                         <td>{{ $patient->id }}</td>
+                        <td>{{ $patient->fullname }}</td>
                         <td>{{ $patient->email }}</td>
                         <td>{{ $patient->phone }}</td>
                         <td>
@@ -35,13 +36,10 @@
                         <td>
                             <a href="{{ route('doctor.patients.showDetails', $patient->id) }}" class="btn btn-info btn-sm">View Details</a>
                         </td>
+
+
                         <td>
                             <a href="{{ route('doctor.patients.show', $patient->id) }}" class="btn btn-primary btn-sm">View Visits</a>
-                        </td>
-                        <td>
-                            <a href="{{ route('doctor.patients.games', $patient->id) }}" class="btn btn-secondary btn-sm">
-                                View Diagnosis
-                            </a>
                         </td>
                     </tr>
                 @endforeach
