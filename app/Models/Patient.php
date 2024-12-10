@@ -23,7 +23,14 @@ class Patient extends Authenticatable
     {
         return $this->hasMany(Visit::class);
     }
-
+    public function gameResults()
+    {
+        return $this->hasMany(ParkinsonGameResult::class, 'patient_id');
+    }
+    public function typingGameResults()
+    {
+        return $this->hasMany(TypingTestResult::class, 'patient_id');
+    }
     public function surveys()
     {
         return $this->hasMany(Survey::class);
